@@ -207,7 +207,7 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
       </div>
     </fieldset>
 
-    <div class="block" id="quantos" hidden>
+    <div class="block" id="quantos">
       <h2 class="q">Quantas pessoas vão?</h2>
       <div class="frame panel">
         <div class="stepper-row">
@@ -290,7 +290,6 @@ document.querySelectorAll(".stepper").forEach((s) => {
 });
 
 form.addEventListener("change", (e) => {
-  if (e.target.name === "status") $("quantos").hidden = picked("status") === "nao";
 });
 
 function showError(msg) { $("erro").textContent = msg; $("erro").hidden = !msg; }
