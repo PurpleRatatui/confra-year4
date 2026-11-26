@@ -79,9 +79,10 @@ body::before {
 }
 .caption { font: 400 17px/1.2 var(--hand); color: var(--caption); text-align: center; margin: 8px 0 0; }
 
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; }
-.fact { min-width: 0; margin: 0; }
-.fact .frame { padding: 16px 8px; text-align: center; min-height: 92px; display: flex; flex-direction: column; justify-content: center; }
+.facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.7fr); gap: 12px; margin: 0; }
+.fact { min-width: 0; margin: 0; display: flex; flex-direction: column; }
+.fact .frame { flex: 1; margin: 0; padding: 14px 8px; text-align: center; min-height: 92px; display: flex; flex-direction: column; justify-content: center; }
+.fact .caption { margin: 8px 0 0; }
 .fact .v { font: 800 20px/1.1 var(--body); color: var(--ink); }
 .fact .s { font: 600 13px/1.25 var(--body); color: var(--muted); margin-top: 4px; }
 
@@ -92,17 +93,16 @@ form { display: flex; flex-direction: column; gap: 22px; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 
 /* Class grid: one frame per child, name underneath like the photo */
-.turma { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px 10px; }
-@media (max-width: 400px) { .turma { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.turma { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 10px; }
 .kid { position: relative; min-width: 0; text-align: center; }
 .kid input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; z-index: 2; }
 .kid .frame {
-  aspect-ratio: 4 / 5; max-width: 100%;
+  aspect-ratio: 1 / 1; max-width: 100%; border-radius: 14px;
   display: grid; place-items: center;
-  font: 700 30px/1 var(--hand); color: var(--red);
+  font: 700 26px/1 var(--hand); color: var(--red);
   transition: transform .15s, box-shadow .15s, background .15s;
 }
-.kid .name { display: block; font: 400 15px/1.15 var(--hand); color: var(--caption); margin-top: 6px; overflow-wrap: anywhere; }
+.kid .name { display: block; font: 400 14px/1.15 var(--hand); color: var(--caption); margin-top: 6px; overflow-wrap: anywhere; }
 .kid input:checked + .frame { background: var(--red); color: #fff; transform: translateY(-2px) rotate(-1.5deg); box-shadow: 0 0 0 3px #fff, 0 10px 22px rgba(0,0,0,.35); }
 .kid input:focus-visible + .frame { outline: 3px solid #FFD27A; outline-offset: 3px; }
 
@@ -186,11 +186,6 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
     <fieldset class="block">
       <legend class="q">Quem é o seu filho(a)?</legend>
       <div class="turma" id="turma"></div>
-      <div class="frame panel" id="sobrenome-box" hidden>
-        <label class="field" for="sobrenome"><span id="dup-msg">Temos duas Stella na turma.</span> Qual o sobrenome?
-          <input type="text" id="sobrenome" maxlength="60" autocomplete="off" placeholder="Sobrenome">
-        </label>
-      </div>
     </fieldset>
 
     <fieldset class="block">
@@ -244,11 +239,9 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
 // URL do app da Web do Google Apps Script (Implantar > App da Web > termina em /exec)
 const SCRIPT_URL = "__SCRIPT_URL__";
 
-// Turma do Year 4 (sem as professoras). Nomes repetidos pedem sobrenome.
+// Turma do Year 4 (sem as professoras). Nomes repetidos levam a inicial do sobrenome.
 const TURMA = ["Alice", "Arthur", "Benjamin", "Daniel", "Davi", "Enzo", "Felipe", "Lorena",
-               "Luisa", "Maria Fernanda", "Marina", "Régis", "Stella", "Theo C.", "Theo G."];
-const REPETIDOS = ["Stella"];
-const AVISO_REPETIDO = { Stella: "Temos duas Stella na turma." };
+               "Luisa", "Maria Fernanda", "Marina", "Régis", "Stella B.", "Stella W.", "Theo C.", "Theo G."];
 
 const $ = (id) => document.getElementById(id);
 const form = $("form");
@@ -296,11 +289,6 @@ document.querySelectorAll(".stepper").forEach((s) => {
 
 form.addEventListener("change", (e) => {
   if (e.target.name === "status") $("quantos").hidden = picked("status") === "nao";
-  if (e.target.name === "aluno") {
-    const dup = REPETIDOS.includes(e.target.value);
-    $("sobrenome-box").hidden = !dup;
-    if (dup) $("dup-msg").textContent = AVISO_REPETIDO[e.target.value];
-  }
 });
 
 function showError(msg) { $("erro").textContent = msg; $("erro").hidden = !msg; }
@@ -311,12 +299,7 @@ form.addEventListener("submit", async (e) => {
   const nome = picked("aluno");
   const st = picked("status");
   if (!nome) { showError("Toque no nome do seu filho(a)."); grid.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
-  let aluno = nome;
-  if (REPETIDOS.includes(nome)) {
-    const sob = $("sobrenome").value.trim();
-    if (!sob) { showError("Escreva o sobrenome do(a) " + nome + "."); $("sobrenome").focus(); return; }
-    aluno = nome + " " + sob;
-  }
+  const aluno = nome;
   if (!st) { showError("Escolha se vocês vão participar."); return; }
   const vai = st !== "nao";
   if (vai && counts.adultos + counts.criancas === 0) { showError("Coloque pelo menos uma pessoa, ou escolha \"Não vamos conseguir\"."); return; }
