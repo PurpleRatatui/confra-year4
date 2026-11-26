@@ -6,7 +6,7 @@
 <title>Confra Year 4</title>
 <meta name="description" content="Confirme a presença da sua família na confraternização de fim de ano do Year 4.">
 <meta property="og:title" content="Confra de fim de ano · Year 4 2026">
-<meta property="og:description" content="Segunda, 30/11, às 18h. Confirme quantas pessoas vão.">
+<meta property="og:description" content="Segunda, 30/11, às 18h30. Confirme quantas pessoas vão.">
 <meta name="theme-color" content="#4A0D15">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -190,7 +190,7 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
 
   <dl class="facts">
     <div class="fact"><dd class="frame"><span class="v">30/11</span><span class="s">segunda</span></dd><dt class="caption">Dia</dt></div>
-    <div class="fact"><dd class="frame"><span class="v">18h</span></dd><dt class="caption">Hora</dt></div>
+    <div class="fact"><dd class="frame"><span class="v">18h30</span></dd><dt class="caption">Hora</dt></div>
     <div class="fact"><dd class="frame"><span class="v">Salão Social</span><span class="s">Parque das Cascatas</span></dd><dt class="caption">Local</dt></div>
   </dl>
 
@@ -376,7 +376,7 @@ form.addEventListener("submit", async (e) => {
         payload.adultos + (payload.adultos === 1 ? " adulto" : " adultos") + " e " +
         payload.criancas + (payload.criancas === 1 ? " criança" : " crianças") + " (" + total + " no total)";
     $("obrigado-texto").textContent =
-      st === "sim" ? "Nos vemos dia 30/11 às 18h no Salão Social do Parque das Cascatas."
+      st === "sim" ? "Nos vemos dia 30/11 às 18h30 no Salão Social do Parque das Cascatas."
       : st === "talvez" ? "Anotamos como talvez."
       : "Obrigada por avisar.";
     $("obrigado").hidden = false;
