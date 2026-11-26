@@ -92,16 +92,6 @@ body {
 .fact dd { margin: 6px 0 0; font: 700 18px/1.15 var(--display); }
 .fact dd small { display: block; font: 600 13px/1.3 var(--body); opacity: .85; }
 
-/* Live counter */
-.counter {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--surface); border: 1px solid var(--line);
-  border-radius: 16px; padding: 14px 18px;
-}
-.counter .num { font: 800 34px/1 var(--display); color: var(--coral); font-variant-numeric: tabular-nums; min-width: 2ch; }
-.counter p { margin: 0; color: var(--muted); font-size: 15px; }
-.counter b { color: var(--ink); }
-
 /* Form */
 form { display: flex; flex-direction: column; gap: 16px; }
 .card {
@@ -187,10 +177,6 @@ input[type=text]:focus { outline: none; border-color: var(--green); box-shadow: 
     </dl>
   </section>
 
-  <section class="counter" id="counter" hidden aria-live="polite">
-    <div class="num" id="c-pessoas">0</div>
-    <p><b>pessoas confirmadas</b> de <span id="c-familias">0</span> famílias. O salão comporta até 50.</p>
-  </section>
 
   <form id="form" novalidate>
     <div class="card">
@@ -236,7 +222,7 @@ input[type=text]:focus { outline: none; border-color: var(--green); box-shadow: 
 
     <p class="error" id="erro" role="alert" hidden></p>
     <button class="submit" type="submit" id="enviar">Enviar resposta</button>
-    <p class="foot">Os nomes ficam só na planilha da organização. Aqui aparece apenas o total.</p>
+    <p class="foot">As respostas ficam só com a organização da confra.</p>
   </form>
 
   <section class="card thanks" id="obrigado" hidden aria-live="polite">
@@ -255,22 +241,6 @@ const SCRIPT_URL = "__SCRIPT_URL__";
 const $ = (id) => document.getElementById(id);
 const form = $("form");
 const counts = { adultos: 1, criancas: 1 };
-
-function renderSummary(row) {
-  if (!row) return;
-  const pessoas = Number(row.pessoas) || 0;
-  const familias = Number(row.familias) || 0;
-  $("c-pessoas").textContent = pessoas;
-  $("c-familias").textContent = familias;
-  $("counter").hidden = familias === 0;
-}
-
-async function loadSummary() {
-  try {
-    const r = await fetch(SCRIPT_URL);
-    if (r.ok) renderSummary(await r.json());
-  } catch (e) { /* counter is optional */ }
-}
 
 function status() {
   const el = form.querySelector('input[name="status"]:checked');
@@ -344,7 +314,6 @@ form.addEventListener("submit", async (e) => {
       : "Se der certo de ir, é só responder de novo com o mesmo nome.";
     $("obrigado").hidden = false;
     $("obrigado").scrollIntoView({ behavior: "smooth", block: "start" });
-    renderSummary(res);
   } catch (err) {
     showError("Não conseguimos enviar agora. Confira a internet e tente de novo.");
   } finally {
@@ -359,7 +328,6 @@ $("de-novo").addEventListener("click", () => {
 });
 
 syncSteppers();
-loadSummary();
 </script>
 </body>
 </html>
