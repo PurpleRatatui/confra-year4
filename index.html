@@ -8,6 +8,7 @@
 <meta property="og:title" content="Confra de fim de ano · Year 4 2026">
 <meta property="og:description" content="Segunda, 30/11, às 18h. Confirme quantas pessoas vão.">
 <meta name="theme-color" content="#4A0D15">
+<meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap">
@@ -66,9 +67,9 @@ body::before {
 .wrap { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
 
 /* Header */
-.head { color: var(--caption); display: flex; flex-direction: column; gap: 2px; }
-.year { font: 700 clamp(40px, 12vw, 56px)/1 var(--hand); letter-spacing: .01em; margin: 0; text-shadow: 0 2px 0 rgba(0,0,0,.18); }
-.head h1 { font: 400 clamp(22px, 6vw, 28px)/1.2 var(--hand); margin: 0; opacity: .95; }
+.head { color: var(--caption); display: flex; flex-direction: column; gap: 14px; }
+.turma-foto { display: block; width: 100%; height: auto; max-width: 100%; border-radius: 14px; border: 3px solid var(--frame-edge); box-shadow: 0 10px 28px rgba(0,0,0,.4); }
+.head h1 { font: 700 clamp(34px, 10vw, 48px)/1 var(--hand); margin: 0; text-align: center; text-shadow: 0 2px 0 rgba(0,0,0,.18); }
 
 /* Photo-frame blocks */
 .frame {
@@ -172,7 +173,7 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
 <main class="wrap">
 
   <header class="head">
-    <p class="year">Year 4 · 2026</p>
+    <img class="turma-foto" src="assets/turma.jpg" width="1400" height="981" alt="Foto da turma do Year 4 2026">
     <h1>Confra de fim de ano</h1>
   </header>
 
