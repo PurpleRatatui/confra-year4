@@ -2,7 +2,7 @@
 // Cole este arquivo inteiro em Extensões > Apps Script da planilha de respostas.
 
 const ABA = 'Respostas';
-const CABECALHO = ['Data/hora', 'Aluno(a)', 'Resposta', 'Adultos', 'Crianças', 'Total', 'Alergias / restrições'];
+const CABECALHO = ['Data/hora', 'Aluno(a)', 'Resposta', 'Adultos', 'Crianças', 'Total', 'Alergias / restrições', 'Idades das crianças'];
 
 function aba_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -42,8 +42,11 @@ function doPost(e) {
     const adultos = vai ? numero_(d.adultos) : 0;
     const criancas = vai ? numero_(d.criancas) : 0;
     const alergias = vai ? texto_(d.alergias, 200) : '';
+    const idades = vai && Array.isArray(d.idades)
+      ? d.idades.slice(0, 10).map(function (v) { const n = parseInt(v, 10); return isNaN(n) ? '?' : String(Math.max(0, Math.min(17, n))); }).join(', ')
+      : '';
 
-    aba_().appendRow([new Date(), aluno, resposta, adultos, criancas, adultos + criancas, alergias]);
+    aba_().appendRow([new Date(), aluno, resposta, adultos, criancas, adultos + criancas, alergias, idades]);
     const r = resumo_();
     r.ok = true;
     return json_(r);

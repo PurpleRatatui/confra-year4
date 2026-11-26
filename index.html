@@ -143,6 +143,12 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
 .stepper-row .lbl { min-width: 0; }
 .stepper-row .lbl b { display: block; font-size: 17px; color: var(--ink); }
 .stepper-row .lbl small { color: var(--muted); font-size: 14px; }
+.idades { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+.idades b { font-size: 17px; color: var(--ink); }
+.idades-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.idade { display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 13px; font-weight: 700; color: var(--muted); }
+.idade select { font: 700 16px/1.2 var(--body); color: var(--ink); background: #fff; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; box-shadow: none; width: 100%; }
+.idade select:invalid { color: var(--muted); font-weight: 600; }
 .stepper { display: flex; align-items: center; gap: 4px; flex: none; }
 .stepper button {
   width: 44px; height: 44px; border-radius: 50%;
@@ -226,6 +232,10 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
             <button type="button" data-step="1" aria-label="Mais uma criança">+</button>
           </div>
         </div>
+        <div class="idades" id="idades-box">
+          <b>Idade de cada criança</b>
+          <div class="idades-grid" id="idades"></div>
+        </div>
         <label class="field" for="alergias">Alguma alergia ou restrição alimentar? <span class="opt">(opcional)</span>
           <input type="text" id="alergias" name="alergias" maxlength="200" placeholder="Ex.: sem lactose">
         </label>
@@ -270,6 +280,32 @@ function picked(name) {
   return el ? el.value : null;
 }
 
+function renderIdades() {
+  const box = $("idades");
+  const n = counts.criancas;
+  $("idades-box").hidden = n === 0;
+  while (box.children.length > n) box.lastElementChild.remove();
+  while (box.children.length < n) {
+    const i = box.children.length;
+    const lab = document.createElement("label");
+    lab.className = "idade";
+    lab.htmlFor = "idade-" + i;
+    lab.textContent = i === 0 ? "Aluno(a)" : "Criança " + (i + 1);
+    const s = document.createElement("select");
+    s.id = "idade-" + i; s.required = true;
+    const ph = document.createElement("option");
+    ph.value = ""; ph.textContent = "Idade"; ph.disabled = true; ph.selected = true;
+    s.append(ph);
+    for (let a = 0; a <= 17; a++) {
+      const o = document.createElement("option");
+      o.value = a; o.textContent = a === 0 ? "menos de 1 ano" : a === 1 ? "1 ano" : a + " anos";
+      s.append(o);
+    }
+    lab.append(s);
+    box.append(lab);
+  }
+}
+
 function syncSteppers() {
   document.querySelectorAll(".stepper").forEach((s) => {
     const f = s.dataset.field, min = +s.dataset.min, max = +s.dataset.max;
@@ -277,6 +313,7 @@ function syncSteppers() {
     s.querySelector('[data-step="-1"]').disabled = counts[f] <= min;
     s.querySelector('[data-step="1"]').disabled = counts[f] >= max;
   });
+  renderIdades();
 }
 
 document.querySelectorAll(".stepper").forEach((s) => {
@@ -304,12 +341,19 @@ form.addEventListener("submit", async (e) => {
   if (!st) { showError("Escolha se vocês vão participar."); return; }
   const vai = st !== "nao";
   if (vai && counts.adultos + counts.criancas === 0) { showError("Coloque pelo menos uma pessoa, ou escolha \"Não vamos conseguir\"."); return; }
+  const idades = [...$("idades").querySelectorAll("select")].map((x) => x.value);
+  if (vai && idades.some((v) => v === "")) {
+    showError("Escolha a idade de cada criança.");
+    $("idades").querySelector("select:invalid")?.focus();
+    return;
+  }
 
   const payload = {
     aluno,
     status: st,
     adultos: vai ? counts.adultos : 0,
     criancas: vai ? counts.criancas : 0,
+    idades: vai ? idades.map(Number) : [],
     alergias: vai ? ($("alergias").value.trim() || null) : null
   };
 
