@@ -187,7 +187,7 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
       <legend class="q">Quem é o seu filho(a)?</legend>
       <div class="turma" id="turma"></div>
       <div class="frame panel" id="sobrenome-box" hidden>
-        <label class="field" for="sobrenome"><span id="dup-msg">Temos dois Theo na turma.</span> Qual o sobrenome?
+        <label class="field" for="sobrenome"><span id="dup-msg">Temos duas Stella na turma.</span> Qual o sobrenome?
           <input type="text" id="sobrenome" maxlength="60" autocomplete="off" placeholder="Sobrenome">
         </label>
       </div>
@@ -246,9 +246,9 @@ const SCRIPT_URL = "__SCRIPT_URL__";
 
 // Turma do Year 4 (sem as professoras). Nomes repetidos pedem sobrenome.
 const TURMA = ["Alice", "Arthur", "Benjamin", "Daniel", "Davi", "Enzo", "Felipe", "Lorena",
-               "Luisa", "Maria Fernanda", "Marina", "Régis", "Stella", "Theo"];
-const REPETIDOS = ["Stella", "Theo"];
-const AVISO_REPETIDO = { Stella: "Temos duas Stella na turma.", Theo: "Temos dois Theo na turma." };
+               "Luisa", "Maria Fernanda", "Marina", "Régis", "Stella", "Theo C.", "Theo G."];
+const REPETIDOS = ["Stella"];
+const AVISO_REPETIDO = { Stella: "Temos duas Stella na turma." };
 
 const $ = (id) => document.getElementById(id);
 const form = $("form");
