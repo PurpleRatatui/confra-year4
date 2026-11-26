@@ -94,19 +94,23 @@ form { display: flex; flex-direction: column; gap: 22px; }
 .q { font: 700 24px/1.15 var(--hand); color: var(--caption); margin: 0; padding: 0; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 
-/* Class grid: one frame per child, name underneath like the photo */
-.turma { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 10px; }
-.kid { position: relative; min-width: 0; text-align: center; }
-.kid input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; z-index: 2; }
-.kid .frame {
-  aspect-ratio: 1 / 1; max-width: 100%; border-radius: 14px;
-  display: grid; place-items: center;
-  font: 700 26px/1 var(--hand); color: var(--red);
-  transition: transform .15s, box-shadow .15s, background .15s;
+/* Student dropdown, styled as a photo frame */
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: ""; position: absolute; right: 20px; top: 50%; width: 10px; height: 10px;
+  border-right: 3px solid var(--red); border-bottom: 3px solid var(--red);
+  transform: translateY(-70%) rotate(45deg); pointer-events: none;
 }
-.kid .name { display: block; font: 400 14px/1.15 var(--hand); color: var(--caption); margin-top: 6px; overflow-wrap: anywhere; }
-.kid input:checked + .frame { background: var(--red); color: #fff; transform: translateY(-2px) rotate(-1.5deg); box-shadow: 0 0 0 3px #fff, 0 10px 22px rgba(0,0,0,.35); }
-.kid input:focus-visible + .frame { outline: 3px solid #FFD27A; outline-offset: 3px; }
+select {
+  -webkit-appearance: none; appearance: none; width: 100%;
+  font: 800 18px/1.2 var(--body); color: var(--ink);
+  background: var(--frame); border: 3px solid var(--frame-edge); border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  padding: 16px 48px 16px 16px; cursor: pointer;
+}
+select:invalid { color: var(--muted); font-weight: 600; }
+select option { color: var(--ink); background: #fff; }
+select:focus-visible { outline: 3px solid #FFD27A; outline-offset: 3px; }
 
 .panel { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 label.field { display: flex; flex-direction: column; gap: 6px; font-weight: 700; color: var(--ink); }
@@ -186,8 +190,12 @@ input[type=text]:focus { outline: none; border-color: var(--red); box-shadow: 0 
 
   <form id="form" novalidate>
     <fieldset class="block">
-      <legend class="q">Quem é o seu filho(a)?</legend>
-      <div class="turma" id="turma"></div>
+      <legend class="q"><label for="aluno">Quem é o seu filho(a)?</label></legend>
+      <div class="select-wrap">
+        <select id="aluno" name="aluno" required>
+          <option value="" selected disabled>Escolha o nome</option>
+        </select>
+      </div>
     </fieldset>
 
     <fieldset class="block">
@@ -249,20 +257,12 @@ const $ = (id) => document.getElementById(id);
 const form = $("form");
 const counts = { adultos: 1, criancas: 1 };
 
-// Monta a grade da turma
-const grid = $("turma");
-TURMA.forEach((nome, i) => {
-  const label = document.createElement("label");
-  label.className = "kid";
-  const input = document.createElement("input");
-  input.type = "radio"; input.name = "aluno"; input.value = nome; input.id = "kid-" + i;
-  const frame = document.createElement("span");
-  frame.className = "frame"; frame.setAttribute("aria-hidden", "true");
-  frame.textContent = nome.charAt(0);
-  const name = document.createElement("span");
-  name.className = "name"; name.textContent = nome;
-  label.append(input, frame, name);
-  grid.append(label);
+// Monta a lista da turma
+const sel = $("aluno");
+TURMA.forEach((nome) => {
+  const o = document.createElement("option");
+  o.value = nome; o.textContent = nome;
+  sel.append(o);
 });
 
 function picked(name) {
@@ -298,9 +298,9 @@ function showError(msg) { $("erro").textContent = msg; $("erro").hidden = !msg; 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   showError("");
-  const nome = picked("aluno");
+  const nome = sel.value;
   const st = picked("status");
-  if (!nome) { showError("Toque no nome do seu filho(a)."); grid.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+  if (!nome) { showError("Escolha o nome do seu filho(a)."); sel.focus(); return; }
   const aluno = nome;
   if (!st) { showError("Escolha se vocês vão participar."); return; }
   const vai = st !== "nao";
