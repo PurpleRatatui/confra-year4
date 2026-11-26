@@ -76,7 +76,7 @@ body {
   -webkit-mask: radial-gradient(circle, #000 0 62%, transparent 63%);
           mask: radial-gradient(circle, #000 0 62%, transparent 63%);
 }
-.eyebrow { font: 700 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+.eyebrow { position: relative; z-index: 1; max-width: 62%; font: 700 12px/1.4 var(--body); letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
 .ticket h1 {
   font: 800 clamp(34px, 9vw, 46px)/0.98 var(--display);
   letter-spacing: -0.02em;
@@ -183,7 +183,6 @@ input[type=text]:focus { outline: none; border-color: var(--green); box-shadow: 
       <label class="field" for="aluno">Nome do(a) aluno(a)
         <input type="text" id="aluno" name="aluno" autocomplete="off" maxlength="80" placeholder="Ex.: Daniel" required>
       </label>
-      <p class="hint">Mudou de ideia depois? É só responder de novo com o mesmo nome.</p>
     </div>
 
     <div class="card">
@@ -229,7 +228,6 @@ input[type=text]:focus { outline: none; border-color: var(--green); box-shadow: 
     <h2 id="obrigado-titulo">Obrigada!</h2>
     <p class="summary" id="obrigado-resumo"></p>
     <p id="obrigado-texto"></p>
-    <button class="link" type="button" id="de-novo">Responder de novo</button>
   </section>
 
 </main>
@@ -310,8 +308,8 @@ form.addEventListener("submit", async (e) => {
         payload.criancas + (payload.criancas === 1 ? " criança" : " crianças") + " (" + total + " no total)";
     $("obrigado-texto").textContent =
       st === "sim" ? "Nos vemos dia 30/11 às 18h no Salão Social do Parque das Cascatas."
-      : st === "talvez" ? "Quando decidir, responda de novo com o mesmo nome."
-      : "Se der certo de ir, é só responder de novo com o mesmo nome.";
+      : st === "talvez" ? "Anotamos como talvez."
+      : "Obrigada por avisar.";
     $("obrigado").hidden = false;
     $("obrigado").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
@@ -319,12 +317,6 @@ form.addEventListener("submit", async (e) => {
   } finally {
     btn.disabled = false; btn.textContent = "Enviar resposta";
   }
-});
-
-$("de-novo").addEventListener("click", () => {
-  $("obrigado").hidden = true;
-  form.hidden = false;
-  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 syncSteppers();
